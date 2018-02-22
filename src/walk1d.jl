@@ -38,18 +38,20 @@ function POMDPs.generate_s(mdp::Walk1D, s::Walk1DState, a::Void, rng::AbstractRN
     mdp.x += rand(rng, mdp.distr)
     Walk1DState(mdp.t, mdp.x)
 end
-AdaptiveStressTesting2.isevent(mdp::Walk1D, s::Walk1DState) = mdp.x > mdp.p.threshx
 POMDPs.isterminal(mdp::Walk1D, s::Walk1DState) = isevent(mdp, s) || mdp.t >= mdp.p.t_max
 POMDPs.reward(mdp::Walk1D, s::Walk1DState, a::Void, sp::Walk1DState) = 0.0
+
+AdaptiveStressTesting2.isevent(mdp::Walk1D, s::Walk1DState) = mdp.x > mdp.p.threshx
+AdaptiveStressTesting2.state_distance(mdp::Walk1D, s1::Walk1DState, s2::Walk1DState) = abs(s1.x-s2.x)
+function AdaptiveStressTesting2.miss_distance(mdp::Walk1D, s::Walk1DState)
+    max(mdp.p.threshx-abs(mdp.x), 0.0)
+end
+
 Base.hash(mdp::Walk1D) = hash(mdp.t, hash(mdp.x))
 
 function Distributions.pdf(mdp::Walk1D, s::Walk1DState, a::Void, sp::Walk1DState)
     pdf(mdp.distr, sp.x-s.x)
 end
-function AdaptiveStressTesting2.miss_distance(mdp::Walk1D, s::Walk1DState)
-    max(mdp.p.threshx-abs(mdp.x), 0.0)
-end
-
 
 
 end #module

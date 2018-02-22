@@ -76,9 +76,11 @@ Base.hash(sim::GWSim) = hash(sim.t, hash(sim.x))
 
 AdaptiveStressTesting2.isevent(sim::GWSim, s::GWState) = s.x in EVENTSTATES
 AdaptiveStressTesting2.miss_distance(sim::GWSim, s::GWState) = sim.md
+function AdaptiveStressTesting2.state_distance(sim::GWSim, s1::GWState, s2::GWState) 
+    sqrt((s1.x.x-s2.x.x)^2+(s1.x.y-s2.x.y)^2)
+end
 
 manhattan(x,y) = sum(abs, x - y)
-
 
 
 end #module
